@@ -2,22 +2,25 @@ import './App.css';
 import Header from './components/Header/Header';
 import Shop from './components/Shop/Shop';
 // import animalData from './fakeData/animal.json';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Review from './components/Review/Review';
 import Invertory from './components/Inventory/Invertory';
 import NotFound from './components/NotFound/NotFound';
 import ProductDetail from './components/ProductDetail/ProductDetail';
+import Login from './components/Login/Login';
+import Shipment from './components/Shipment/Shipment';
+import { createContext, useState } from 'react';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+
+export const UserContext = createContext()
 
 function App() {
-  // console.log(animalData)
+  const [loggedInUser, setLoggedInUser] = useState({})
+
   return (
-    <Router>
-      <div>
+    <UserContext.Provider value={[loggedInUser, setLoggedInUser]}>
+      <Router>
+        <h1>Email : {loggedInUser.email}</h1>
         <Header></Header>
         <Switch>
           <Route exact path="/">
@@ -28,13 +31,21 @@ function App() {
             <Shop></Shop>
           </Route>
 
+          <Route path="/login">
+            <Login></Login>
+          </Route>
+
+          <PrivateRoute path="/shipment">
+            <Shipment></Shipment>
+          </PrivateRoute>
+
           <Route path="/review">
             <Review></Review>
           </Route>
 
-          <Route path="/inventory">
+          <PrivateRoute path="/inventory">
             <Invertory></Invertory>
-          </Route>
+          </PrivateRoute>
 
           <Route path='/product/:productKey'>
             <ProductDetail></ProductDetail>
@@ -45,8 +56,8 @@ function App() {
           </Route>
 
         </Switch>
-      </div>
-    </Router>
+      </Router>
+    </UserContext.Provider>
   );
 }
 
